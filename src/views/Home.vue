@@ -1,4 +1,15 @@
 <template>
-  <h1>Home page</h1>
-  <router-link to="/info/123">Friends info</router-link>
+  <search-box />
 </template>
+
+<script lang="ts">
+  import { defineComponent } from 'vue'
+  import SearchBox from '../components/SearchBox.vue'
+
+  export default defineComponent({
+    name: 'Home',
+    components: {
+      SearchBox,
+    },
+  })
+</script>
