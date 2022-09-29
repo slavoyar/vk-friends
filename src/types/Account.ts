@@ -6,4 +6,7 @@ export interface Account {
   is_closed: boolean
   can_access_closed: boolean
   photo_100?: string
+  sex?: number
+  counters?: { friends: number }
+  bdate?: string
 }
