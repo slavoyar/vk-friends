@@ -6,11 +6,12 @@
       placeholder="Type name or id"
       v-model="value"
     />
-    <div class="searchbox-items" v-show="items.length > 0">
-      <button class="searchbox-item" v-for="item of items">
-        <img :src="item.photo_100" class="searchbox-img" />
-        {{ item.first_name }} {{ item.last_name }}
-      </button>
+    <div class="searchbox-items" v-show="users.length > 0">
+      <search-item
+        v-for="user of users"
+        :user="user"
+        v-on:click="updateSelectedUsers(user)"
+      />
     </div>
   </div>
 </template>
@@ -19,6 +20,7 @@
   import { defineComponent } from 'vue'
   import { jsonp } from 'vue-jsonp'
   import { Account } from '../types/Account'
+  import SearchItem from '../components/SearchItem.vue'
 
   interface ResponseGet {
     response: Array<Account>
@@ -30,9 +32,13 @@
 
   export default defineComponent({
     name: 'SearchBox',
+    components: {
+      SearchItem,
+    },
+    emits: ['addUser'],
     data() {
       return {
-        items: new Array<Account>(),
+        users: new Array<Account>(),
         value: '',
         count: 20, //max number of search results
         timer: null as any,
@@ -67,18 +73,21 @@
           this.count
 
         const response = (await jsonp(requestUrl)) as ResponseSearch
-        console.log(response)
         this.handleResponse(response.response.items)
       },
       handleResponse(response: Array<Account>) {
-        this.items = []
+        this.users = []
         console.log(response)
         if (response) {
           for (const item of response) {
-            this.items.push(item)
+            this.users.push(item)
           }
-          console.log(this.items)
         }
+      },
+      updateSelectedUsers(user: Account) {
+        this.$emit('addUser', user)
+        this.users = []
+        this.value = ''
       },
     },
     watch: {
@@ -94,7 +103,7 @@
           } else if (this.value !== '') {
             this.getUsersByName()
           } else {
-            this.items = []
+            this.users = []
           }
         }, 500)
       },
@@ -104,6 +113,7 @@
 
 <style>
   .searchbox {
+    position: relative;
     margin: 50px auto;
     text-align: center;
   }
@@ -114,24 +124,14 @@
   }
 
   .searchbox-items {
+    background-color: white;
+    z-index: 100;
+    position: absolute;
     border: 1px solid;
     width: 300px;
-    margin: 10px auto 0;
+    margin-top: 10px;
     max-height: 300px;
+    left: calc(50% - 150px);
     overflow-y: scroll;
-  }
-
-  .searchbox-img {
-    width: 30px;
-  }
-
-  .searchbox-item {
-    display: block;
-    background-color: white;
-    border: 0;
-    cursor: pointer;
-    font-size: 14pt;
-    height: 30px;
-    margin: 5px;
   }
 </style>
