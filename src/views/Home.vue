@@ -144,10 +144,6 @@
 </script>
 
 <style>
-  .container {
-    width: 70%;
-    margin: 0 auto;
-  }
 
   .show-friends-button {
     display: block;

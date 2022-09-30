@@ -1,5 +1,6 @@
 import { jsonp } from 'vue-jsonp'
 import { Account } from './types/Account'
+import { Post } from './types/Post'
 
 const TOKEN = import.meta.env.VITE_ACCESS_TOKEN
 const API = 'https://api.vk.com/method/'
@@ -15,7 +16,7 @@ interface ResponseGet {
  * Type for result got with user.search method.
  */
 interface ResponseSearch {
-  response: { count: number; items: Array<Account> }
+  response: { count: number; items: Array<Account | Post> }
 }
 
 /**
@@ -61,7 +62,7 @@ export async function getUsersByName(
     count
 
   const response = (await jsonp(requestUrl)) as ResponseSearch
-  return response.response.items
+  return response.response.items as Account[]
 }
 
 /**
@@ -81,10 +82,39 @@ export async function getFriendsById(value: number): Promise<Account[]> {
     '&fields=bdate,sex,photo_100'
 
   const response = (await jsonp(requestUrl)) as ResponseSearch
-  return response.response != undefined ? response.response.items : []
+  return response.response != undefined
+    ? (response.response.items as Account[])
+    : []
 }
 
+/**
+ * Get all posts from given user page.
+ *
+ * @param value Id of current user.
+ * @returns Array of posts.
+ */
+export async function getPosts(value: number): Promise<Post[]> {
+  const requestUrl =
+    API +
+    'wall.get?v=5.131&' +
+    'access_token=' +
+    TOKEN +
+    '&owner_id=' +
+    value
 
+  const response = (await jsonp(requestUrl)) as ResponseSearch
+  console.log(response.response)
+  return response.response != undefined
+    ? (response.response.items as Post[])
+    : []
+}
+
+/**
+ * Delay fro given time in ms.
+ *
+ * @param ms Delay in ms.
+ * @returns
+ */
 export function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
