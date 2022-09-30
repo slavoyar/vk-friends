@@ -1,10 +1,10 @@
 <template>
-  <div class="friend-card">
+  <div class="friend-card" :style="getColor">
     <img :src="user?.photo_100" alt="" />
     <span>{{ user?.first_name }} {{ user?.last_name }}</span>
     <span>Sex: {{ getSex }}</span>
     <span>Age: {{ getAge }}</span>
-    <span>Friends: {{ user?.counters?.friends }}</span>
+    <span>Friends: {{ user?.friends?.length }}</span>
   </div>
 </template>
 
@@ -16,6 +16,7 @@
     name: 'FriendCard',
     props: {
       user: Object as PropType<Account>,
+      colorRatio: Number,
     },
     computed: {
       getSex() {
@@ -47,6 +48,25 @@
         }
         return result == null ? 'Unknown' : result
       },
+      getColor() {
+        const ratio = this.colorRatio != null ? this.colorRatio / 2 : 0
+        return `background-color: rgba(0,0,0,${ratio})`
+      },
     },
   })
 </script>
+
+<style>
+  .friend-card {
+    display: inline-block;
+    width: 200px;
+    margin: 10px;
+    padding: 5px;
+    text-align: center;
+    border: 1px solid;
+  }
+
+  span {
+    display: block;
+  }
+</style>

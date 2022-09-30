@@ -7,6 +7,6 @@ export interface Account {
   can_access_closed: boolean
   photo_100?: string
   sex?: number
-  counters?: { friends: number }
   bdate?: string
+  friends?: Account[]
 }

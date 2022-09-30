@@ -11,7 +11,8 @@
   "dependencies": {
     "vue": "^3.2.37",
     "vue-jsonp": "^2.0.0",
-    "vue-router": "^4.0.13"
+    "vue-router": "^4.0.13",
+    "vue3-loading-overlay": "^0.0.0"
   },
   "devDependencies": {
     "@types/node": "^18.7.23",
