@@ -18,17 +18,9 @@
 
 <script lang="ts">
   import { defineComponent } from 'vue'
-  import { jsonp } from 'vue-jsonp'
+  import * as utils from '../utils'
   import { Account } from '../types/Account'
   import SearchItem from '../components/SearchItem.vue'
-
-  interface ResponseGet {
-    response: Array<Account>
-  }
-
-  interface ResponseSearch {
-    response: { count: number; items: Array<Account> }
-  }
 
   export default defineComponent({
     name: 'SearchBox',
@@ -42,47 +34,14 @@
         value: '',
         count: 20, //max number of search results
         timer: null as any,
-        api: import.meta.env.VITE_API_URL,
-        token: import.meta.env.VITE_ACCESS_TOKEN,
       }
     },
     methods: {
       async getUserById() {
-        const requestUrl =
-          this.api +
-          'users.get?v=5.131&' +
-          'access_token=' +
-          this.token +
-          '&user_ids=' +
-          this.value +
-          '&fields=photo_100'
-
-        const response = (await jsonp(requestUrl)) as ResponseGet
-        this.handleResponse(response.response)
+        this.users = await utils.getUserById(Number(this.value))
       },
       async getUsersByName() {
-        const requestUrl =
-          this.api +
-          'users.search?v=5.131&' +
-          'access_token=' +
-          this.token +
-          '&q=' +
-          this.value +
-          '&fields=photo_100' +
-          '&count=' +
-          this.count
-
-        const response = (await jsonp(requestUrl)) as ResponseSearch
-        this.handleResponse(response.response.items)
-      },
-      handleResponse(response: Array<Account>) {
-        this.users = []
-        console.log(response)
-        if (response) {
-          for (const item of response) {
-            this.users.push(item)
-          }
-        }
+        this.users = await utils.getUsersByName(this.value)
       },
       updateSelectedUsers(user: Account) {
         this.$emit('addUser', user)
